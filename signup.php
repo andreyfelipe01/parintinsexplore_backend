@@ -1,5 +1,5 @@
 <?php
- 
+ try {
     include 'db.php';
      
      // Getting the received JSON into $json variable.
@@ -36,4 +36,7 @@
     $MSG = 'Sucessfull';
     $json = json_encode($MSG);
     echo $json;
+    } catch (PDOException $e) {
+        echo "Erro: " . $e->getMessage();
+    }
 ?>
