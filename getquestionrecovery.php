@@ -3,22 +3,22 @@ include 'db.php';
 
 try {
 
-    function verificarUsuario($connection, $nomeUsuario) {
-        $sql = "SELECT nome_usuario FROM cadastro WHERE nome_usuario = :nomeUsuario";
+    function getQuestion($connection, $nomeUsuario) {
+        $sql = "SELECT pergunta_rec.pergunta FROM cadastro, pergunta_rec WHERE cadastro.nome_usuario = :nomeUsuario and pergunta_rec.user_cadastro = cadastro.nome_usuario";
         $stmt = $connection->prepare($sql);
         $stmt->bindParam(':nomeUsuario', $nomeUsuario, PDO::PARAM_STR);
         $stmt->execute();
-        return $stmt->rowCount() === 0;
+        return $stmt->fetchAll();
     }
 
     // Rota para verificar a disponibilidade do nome de usuário
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $data = json_decode(file_get_contents("php://input"), true);
-        $nomeUsuario = $data['nome_usuario'];
-        $disponivel = verificarUsuario($connection, $nomeUsuario);
+        $nomeUsuario = $data['nomeUsuario'];
+        $response = getQuestion($connection, $nomeUsuario);
 
-        echo json_encode(['disponivel' => $disponivel]);
+        echo json_encode($response);
 
     }
     } catch (PDOException $e) {

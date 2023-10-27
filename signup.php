@@ -33,7 +33,7 @@
     $statement_insert_perg->bindParam(':userCadastroGet', $nomeUsuario);
     $statement_insert_perg->execute();
 
-    $MSG = 'Sucessfull';
+    $MSG = 'Successful';
     $json = json_encode($MSG);
     echo $json;
     } catch (PDOException $e) {
