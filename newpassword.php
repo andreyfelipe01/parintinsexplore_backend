@@ -3,13 +3,12 @@ include 'db.php';
 
 try {
 
-    function verifyAnswer($connection, $nomeUsuario, $resposta) {
-        $sql = "SELECT cadastro.nome_usuario, pergunta_rec.resposta FROM cadastro, pergunta_rec WHERE cadastro.nome_usuario = :nomeUsuario and pergunta_rec.resposta = :resposta;";
+    function newPassword($connection, $nomeUsuario, $senha) {
+        $sql = "UPDATE cadastro SET senha = :senha WHERE nome_usuario = :nomeUsuario";
         $stmt = $connection->prepare($sql);
+        $stmt->bindParam(':senha', $senha, PDO::PARAM_STR);
         $stmt->bindParam(':nomeUsuario', $nomeUsuario, PDO::PARAM_STR);
-        $stmt->bindParam(':resposta', $resposta, PDO::PARAM_STR);
         $stmt->execute();
-        return $stmt->rowCount() === 1;
     }
 
     // Rota para verificar a disponibilidade do nome de usuário
@@ -17,10 +16,10 @@ try {
 
         $data = json_decode(file_get_contents("php://input"), true);
         $nomeUsuario = $data['nomeUsuario'];
-        $resposta = $data['resposta'];
-        $response = verifyAnswer($connection, $nomeUsuario, $resposta);
+        $senha = $data['senha'];
+        newPassword($connection, $nomeUsuario, $senha);
 
-        echo json_encode(['check' => $response]);
+        echo json_encode(['update' => true]);
 
     }
     } catch (PDOException $e) {
